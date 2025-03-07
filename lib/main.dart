@@ -1,108 +1,86 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const LibraryManagementScreen(),
+      home: AgeChecker(),
     );
   }
 }
 
-class LibraryManagementScreen extends StatelessWidget {
-  const LibraryManagementScreen({super.key});
+class AgeChecker extends StatefulWidget {
+  @override
+  _AgeCheckerState createState() => _AgeCheckerState();
+}
+
+class _AgeCheckerState extends State<AgeChecker> {
+  TextEditingController nameController = TextEditingController();
+  TextEditingController ageController = TextEditingController();
+  String result = "";
+
+  void checkAge() {
+    String name = nameController.text;
+    int? age = int.tryParse(ageController.text);
+
+    if (name.isEmpty || age == null) {
+      setState(() {
+        result = "Vui lòng nhập đầy đủ thông tin";
+      });
+      return;
+    }
+
+    if (age > 65) {
+      result = "$name là Người già";
+    } else if (age >= 6 && age <= 65) {
+      result = "$name là Người lớn";
+    } else if (age >= 2 && age < 6) {
+      result = "$name là Trẻ em";
+    } else if (age > 0 && age < 2) {
+      result = "$name là Em bé";
+    } else {
+      result = "Tuổi không hợp lệ";
+    }
+
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text(
-          'Hệ thống Quản lý Thư viện',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
+        title: Text("THỰC HÀNH 01"),
         centerTitle: true,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Quản lý'),
-          BottomNavigationBarItem(icon: Icon(Icons.book), label: 'DS Sách'),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Nhân viên'),
-        ],
-        currentIndex: 0,
-        selectedItemColor: Colors.blue,
-        unselectedItemColor: Colors.grey,
-      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'Nhân viên',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            TextField(
+              controller: nameController,
+              decoration: InputDecoration(labelText: "Họ và tên"),
             ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                const Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      border: OutlineInputBorder(),
-                      hintText: 'Nguyen Van A',
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(),
-                  child: const Text('Đổi'),
-                )
-              ],
+            TextField(
+              controller: ageController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: "Tuổi"),
             ),
-            const SizedBox(height: 20),
-            const Text(
-              'Danh sách sách',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: checkAge,
+              child: Text("Kiểm tra"),
             ),
-            const SizedBox(height: 10),
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
-                color: Colors.grey[200],
-              ),
-              child: Column(
-                children: [
-                  CheckboxListTile(
-                    title: const Text('Sách 01'),
-                    value: true,
-                    onChanged: (bool? value) {},
-                  ),
-                  CheckboxListTile(
-                    title: const Text('Sách 02'),
-                    value: true,
-                    onChanged: (bool? value) {},
-                  ),
-                ],
-              ),
+            SizedBox(height: 20),
+            Text(
+              result,
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 20),
-            Center(
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                ),
-                child: const Text('Thêm'),
-              ),
-            )
           ],
         ),
       ),
